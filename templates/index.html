@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="hero">
+    <h1 class="animate__animated animate__fadeIn">Erasmus+</h1>
+    <p class="animate__animated animate__fadeIn">Descobre o mundo, conecta culturas, constrói o futuro da Europa</p>
+    <div style="margin-top:1rem;">
+        <a href="{{ url_for('depoimentos') }}" class="btn">Ver Depoimentos</a>
+        <a href="{{ url_for('erasmus') }}" class="btn btn-secondary">Saber Mais</a>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="card">
+        <h2 style="text-align:center;">Bem-vindo ao Portal Erasmus+</h2>
+        <p style="text-align:center; color:#51607a;">Um lugar para partilhar experiências, encontrar recursos e celebrar a mobilidade internacional.</p>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:1rem; margin-top:1rem;">
+            <div class="card" style="text-align:center;">
+                <i class="fas fa-globe-europe" style="font-size:2rem; color:var(--primary);"></i>
+                <h3>Mobilidade Internacional</h3>
+                <p>Estuda, estagia e vive noutro país europeu.</p>
+            </div>
+            <div class="card" style="text-align:center;">
+                <i class="fas fa-users" style="font-size:2rem; color:var(--accent);"></i>
+                <h3>Comunidade</h3>
+                <p>Encontra estudantes, partilha dicas e cria laços.</p>
+            </div>
+            <div class="card" style="text-align:center;">
+                <i class="fas fa-graduation-cap" style="font-size:2rem; color:var(--secondary);"></i>
+                <h3>Desenvolvimento</h3>
+                <p>Ganha competências valiosas em contexto internacional.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

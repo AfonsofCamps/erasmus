@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Erasmus+ - Portal Digital</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <style>
+        :root {
+            --primary: #0066FF;      /* Azul Erasmus */
+            --secondary: #FFCC00;    /* Amarelo UE */
+            --accent: #00C9A7;       /* Verde moderno */
+            --light: #F4F6F9;
+            --dark: #1B1F3B;
+            --success: #2ECC71;
+            --warning: #F39C12;
+            --danger: #E74C3C;
+        }
+
+        * { box-sizing: border-box; }
+        html,body { height: 100%; margin: 0; font-family: 'Poppins', sans-serif; background: linear-gradient(135deg,#e9f2ff 0%, #f7fbff 100%); color: var(--dark); }
+
+        .navbar {
+            background: white;
+            box-shadow: 0 6px 20px rgba(24,39,75,0.06);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .nav-container { max-width: 1200px; margin: 0 auto; padding: 0.75rem 1rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+        .logo { font-weight:700; color:var(--dark); text-decoration:none; font-size:1.4rem; }
+        .logo span { color: var(--primary); }
+        .nav-links { list-style:none; display:flex; gap:1rem; margin:0; padding:0; align-items:center;}
+        .nav-links a { text-decoration:none; color:var(--dark); padding:0.5rem 0.75rem; border-radius:8px; font-weight:500; }
+        .nav-links a:hover { background: rgba(0,0,0,0.04); color:var(--primary); }
+        .nav-links a.active { background: linear-gradient(90deg,var(--primary), #2b8bff); color:white; }
+
+        .main-content { padding: 2rem 1rem; max-width:1200px; margin: 0 auto; min-height: calc(100vh - 80px); }
+
+        .hero { text-align:center; padding: 3rem 1rem; }
+        .hero h1 { font-size:2.6rem; margin-bottom:0.5rem; color:var(--dark); }
+        .hero p { color: #51607a; margin-bottom:1rem; }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            padding: 0.6rem 1rem;
+            border-radius: 999px;
+            border: none;
+            cursor: pointer;
+            font-weight:600;
+            text-decoration: none;
+            display:inline-block;
+        }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,102,255,0.12); }
+
+        .btn-secondary { background: var(--secondary); color: var(--dark); }
+        .btn-accent { background: var(--accent); color: white; }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: 0 8px 28px rgba(31,45,80,0.06);
+            margin-bottom: 1.25rem;
+        }
+
+        .testimonial-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap:1rem; margin-top:1rem; }
+        .testimonial-card { padding:1rem; border-radius:10px; background: linear-gradient(180deg, rgba(255,255,255,1), rgba(250,252,255,1)); border: 1px solid rgba(15,23,42,0.03); }
+
+        .filter-select { padding:0.5rem 0.75rem; border-radius: 999px; border:1px solid rgba(15,23,42,0.06); background: white; }
+
+        .form-control { width:100%; padding:0.65rem 0.9rem; border-radius:8px; border:1px solid rgba(15,23,42,0.06); background:white; }
+
+        .video-container { border-radius:10px; overflow:hidden; margin-bottom:0.75rem; background:#000; display:block; }
+
+        .flash-messages { position: fixed; top: 80px; right: 20px; z-index: 2000; }
+        .flash-message { padding: 0.85rem 1rem; border-radius:8px; margin-bottom:0.5rem; box-shadow: 0 6px 20px rgba(8,15,30,0.06); }
+        .flash-success { background: rgba(46,204,113,0.12); border:1px solid rgba(46,204,113,0.18); }
+        .flash-error { background: rgba(231,76,60,0.08); border:1px solid rgba(231,76,60,0.12); }
+
+        .stats-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap:1rem; }
+
+        @media (max-width: 768px) {
+            .nav-links { display:none; }
+            .nav-container { justify-content:space-between; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('index') }}" class="logo">Erasmus<span>+</span></a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('erasmus') }}" class="{% if request.endpoint == 'erasmus' %}active{% endif %}">Erasmus</a></li>
+                <li><a href="{{ url_for('europa') }}" class="{% if request.endpoint == 'europa' %}active{% endif %}">Europa</a></li>
+                <li><a href="{{ url_for('cidadania') }}" class="{% if request.endpoint == 'cidadania' %}active{% endif %}">Cidadania</a></li>
+                <li><a href="{{ url_for('depoimentos') }}" class="{% if request.endpoint == 'depoimentos' %}active{% endif %}">Depoimentos</a></li>
+                <li><a href="{{ url_for('jogo') }}" class="{% if request.endpoint == 'jogo' %}active{% endif %}">Jogo</a></li>
+                {% if session.get('user_id') and session.get('is_admin') %}
+                    <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                    <li><a href="{{ url_for('admin_logout') }}">Logout</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('admin_login') }}" class="{% if request.endpoint == 'admin_login' %}active{% endif %}">Admin</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                <div class="flash-message flash-{{ category }} animate__animated animate__fadeInRight">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <script>
+        // small animations
+        gsap.from('.nav-container', {duration:0.8, y:-20, opacity:0});
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

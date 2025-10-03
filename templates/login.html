@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Entrar (Admin)</h2>
+<form action="" method="post" class="form-upload" style="max-width:480px">
+  <label>Utilizador</label>
+  <input type="text" name="username" required>
+  <label>Password</label>
+  <input type="password" name="password" required>
+  <div style="display:flex;gap:8px;margin-top:8px">
+    <button class="btn" type="submit">Entrar</button>
+    <a class="btn ghost" href="{{ url_for('index') }}">Voltar</a>
+  </div>
+  <p class="muted small">Utilizador inicial: <strong>admin</strong> (muda a password em produção)</p>
+</form>
+{% endblock %}

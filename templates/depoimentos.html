@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="hero">
+    <h1>Depoimentos Erasmus</h1>
+    <p>Experiências reais de estudantes</p>
+</div>
+
+<div class="main-content">
+    <div class="card">
+        <h3>Filtrar Depoimentos</h3>
+        <form method="GET" class="card" style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
+            <select name="country" class="filter-select" onchange="this.form.submit()">
+                <option value="">Todos os Países</option>
+                {% for country in countries %}
+                <option value="{{ country.country }}" {% if current_country == country.country %}selected{% endif %}>{{ country.country }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="year" class="filter-select" onchange="this.form.submit()">
+                <option value="">Todos os Anos</option>
+                {% for year in years %}
+                <option value="{{ year.year }}" {% if current_year == year.year|string %}selected{% endif %}>{{ year.year }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="tag" class="filter-select" onchange="this.form.submit()">
+                <option value="">Todas as Tags</option>
+                {% for tag in tags %}
+                <option value="{{ tag }}" {% if current_tag == tag %}selected{% endif %}>{{ tag }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit" class="btn" style="margin-left:auto;">Aplicar Filtros</button>
+            <a href="{{ url_for('depoimentos') }}" class="btn btn-secondary">Limpar</a>
+        </form>
+    </div>
+
+    <div class="card">
+        <h3>Partilha a tua experiência</h3>
+        <form id="addTestimonialForm" enctype="multipart/form-data">
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:0.75rem;">
+                <div><label>Nome</label><input class="form-control" name="student_name" required></div>
+                <div><label>País</label><input class="form-control" name="country" required></div>
+                <div><label>Universidade</label><input class="form-control" name="university" required></div>
+                <div><label>Ano</label><input type="number" min="1987" max="2026" class="form-control" name="year" required></div>
+            </div>
+            <div style="margin-top:0.75rem;">
+                <label>Depoimento</label>
+                <textarea class="form-control" name="testimonial_text" rows="4" required></textarea>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:0.75rem; margin-top:0.75rem;">
+                <div><label>URL do Vídeo</label><input class="form-control" name="video_url" placeholder="https://..."></div>
+                <div><label>Ou carrega um vídeo</label><input type="file" class="form-control" name="video_file" accept="video/*"></div>
+            </div>
+            <div style="margin-top:0.75rem;">
+                <label>Tags (vírgula)</label>
+                <input class="form-control" name="tags" placeholder="cultura, amizades, aprendizagem">
+            </div>
+            <div style="margin-top:0.75rem;">
+                <button type="submit" class="btn btn-accent">Submeter Depoimento</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="testimonial-grid">
+        {% for testimonial in testimonials %}
+        <div class="testimonial-card card">
+            {% if testimonial.video_url %}
+                <div class="video-container">
+                    {% if 'youtube' in testimonial.video_url or 'youtu.be' in testimonial.video_url %}
+                        {% set vid = testimonial.video_url %}
+                        {% if 'v=' in vid %}
+                            {% set vid_id = vid.split('v=')[-1].split('&')[0] %}
+                        {% elif 'youtu.be' in vid %}
+                            {% set vid_id = vid.split('/')[-1] %}
+                        {% else %}
+                            {% set vid_id = '' %}
+                        {% endif %}
+                        {% if vid_id %}
+                            <iframe src="https://www.youtube.com/embed/{{ vid_id }}" frameborder="0" allowfullscreen style="width:100%; height:220px;"></iframe>
+                        {% else %}
+                            <a href="{{ testimonial.video_url }}" target="_blank">{{ testimonial.video_url }}</a>
+                        {% endif %}
+                    {% elif 'vimeo' in testimonial.video_url %}
+                        <iframe src="https://player.vimeo.com/video/{{ testimonial.video_url.split('/')[-1] }}" frameborder="0" allowfullscreen style="width:100%; height:220px;"></iframe>
+                    {% else %}
+                        <a href="{{ testimonial.video_url }}" target="_blank">{{ testimonial.video_url }}</a>
+                    {% endif %}
+                </div>
+            {% elif testimonial.video_file %}
+                <div class="video-container">
+                    <video controls style="width:100%; height:220px;">
+                        <source src="{{ url_for('uploaded_file', filename=testimonial.video_file) }}">
+                        O teu browser não suporta vídeo.
+                    </video>
+                </div>
+            {% endif %}
+
+            <h4>{{ testimonial.student_name }}</h4>
+            <p><strong>{{ testimonial.university }}</strong>, {{ testimonial.country }} ({{ testimonial.year }})</p>
+            <p>{{ testimonial.testimonial_text }}</p>
+            {% if testimonial.tags %}
+                <div style="margin-top:0.5rem;">
+                    {% for tag in testimonial.tags.split(',') %}
+                        <span style="background:var(--primary); color:white; padding:0.25rem 0.5rem; border-radius:12px; font-size:0.8rem; margin-right:0.25rem;">{{ tag.strip() }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        {% else %}
+        <div class="card" style="grid-column:1/-1; text-align:center;">
+            <h3>Nenhum depoimento encontrado</h3>
+            <p>Sê o primeiro a partilhar a tua experiência!</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if total_pages > 1 %}
+    <div style="text-align:center; margin-top:1rem;">
+        {% for p in range(1, total_pages+1) %}
+            <a href="{{ url_for('depoimentos', page=p, country=current_country, year=current_year, tag=current_tag) }}" class="btn" style="margin:0.25rem;">{{ p }}</a>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<script>
+document.getElementById('addTestimonialForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    const fd = new FormData(this);
+    try {
+        const res = await fetch('/api/testimonial/add', { method: 'POST', body: fd });
+        const r = await res.json();
+        if (r.success) {
+            alert(r.message || 'Submetido! Aguarde aprovação.');
+            this.reset();
+        } else {
+            alert('Erro: ' + (r.message || 'erro desconhecido'));
+        }
+    } catch (err) {
+        alert('Erro de rede: ' + err.message);
+    }
+});
+</script>
+{% endblock %}

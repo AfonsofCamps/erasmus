@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="hero">
+    <h1>Gerir Depoimentos</h1>
+    <p>Aprovar, editar ou remover</p>
+</div>
+
+<div class="main-content">
+    <div class="card">
+        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Voltar ao Dashboard</a>
+    </div>
+
+    <div style="display:grid; gap:1rem;">
+        {% for testimonial in testimonials %}
+        <div class="card" id="testimonial-{{ testimonial.id }}">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div><h4>{{ testimonial.student_name }}</h4><small>{{ testimonial.university }} — {{ testimonial.country }} ({{ testimonial.year }})</small></div>
+                <div>
+                    <span style="padding:0.3rem 0.55rem; border-radius:12px; background:{% if testimonial.is_approved %}var(--success){% else %}var(--warning){% endif %}; color:white;">
+                        {% if testimonial.is_approved %}Aprovado{% else %}Pendente{% endif %}
+                    </span>
+                </div>
+            </div>
+            <p style="margin-top:0.5rem;">{{ testimonial.testimonial_text }}</p>
+
+            <div style="display:flex; gap:0.5rem; margin-top:0.75rem;">
+                {% if not testimonial.is_approved %}
+                <button class="btn" onclick="approveTestimonial({{ testimonial.id }})">Aprovar</button>
+                {% endif %}
+                <button class="btn" style="background:var(--danger);" onclick="deleteTestimonial({{ testimonial.id }})">Remover</button>
+            </div>
+        </div>
+        {% else %}
+        <div class="card">Nenhum depoimento encontrado</div>
+        {% endfor %}
+    </div>
+
+    {% if total_pages > 1 %}
+    <div style="text-align:center; margin-top:1rem;">
+        {% for p in range(1, total_pages+1) %}
+        <a href="{{ url_for('admin_testimonials', page=p) }}" class="btn" style="margin:0.25rem;">{{ p }}</a>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<script>
+async function approveTestimonial(id){
+    if(!confirm('Aprovar este depoimento?')) return;
+    try {
+        const res = await fetch(`/api/testimonial/approve/${id}`, { method:'POST' });
+        const r = await res.json();
+        if(r.success) { location.reload(); } else alert('Erro ao aprovar');
+    } catch(e){ alert('Erro de rede'); }
+}
+async function deleteTestimonial(id){
+    if(!confirm('Remover este depoimento? Não pode ser desfeito.')) return;
+    try {
+        const res = await fetch(`/api/testimonial/delete/${id}`, { method:'POST' });
+        const r = await res.json();
+        if(r.success) { document.getElementById('testimonial-'+id).remove(); } else alert('Erro ao remover');
+    } catch(e){ alert('Erro de rede'); }
+}
+</script>
+{% endblock %}

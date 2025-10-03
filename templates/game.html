@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="hero">
+    <h1>🎮 Jogo: Adivinha a Bandeira</h1>
+    <p>Tenta adivinhar o país pela bandeira — escreve o nome e verifica!</p>
+</div>
+
+<div class="main-content">
+    <div class="card" style="text-align:center;">
+        <img id="flag" src="" alt="Bandeira" style="width:260px; border-radius:8px; border:1px solid rgba(0,0,0,0.06);">
+        <div style="margin-top:1rem;">
+            <input id="guess" class="form-control" placeholder="Escreve o país (ex: Portugal)" style="max-width:420px; margin:0.6rem auto;">
+            <div style="display:flex; gap:0.5rem; justify-content:center;">
+                <button class="btn" onclick="checkGuess()">Verificar</button>
+                <button class="btn btn-accent" onclick="nextFlag()">Próxima</button>
+            </div>
+            <p id="result" style="margin-top:0.8rem; font-weight:700;"></p>
+        </div>
+        <div style="margin-top:0.8rem;">
+            <small>Dicas: aceita acentos e variantes, p.ex. 'Reino Unido' / 'United Kingdom' não estão incluidos por defeito.</small>
+        </div>
+    </div>
+</div>
+
+<script>
+const flags = [
+    { country: "Portugal", flag: "https://flagcdn.com/w320/pt.png", aliases:["portugal"] },
+    { country: "Espanha", flag: "https://flagcdn.com/w320/es.png", aliases:["espanha","spain"] },
+    { country: "França", flag: "https://flagcdn.com/w320/fr.png", aliases:["frança","franca","france"] },
+    { country: "Itália", flag: "https://flagcdn.com/w320/it.png", aliases:["itália","italia","italy"] },
+    { country: "Alemanha", flag: "https://flagcdn.com/w320/de.png", aliases:["alemanha","germany","deutschland"] },
+    { country: "Polónia", flag: "https://flagcdn.com/w320/pl.png", aliases:["polónia","polonia","poland"] },
+    { country: "Grécia", flag: "https://flagcdn.com/w320/gr.png", aliases:["grécia","grecia","greece"] },
+    { country: "Suécia", flag: "https://flagcdn.com/w320/se.png", aliases:["suécia","suecia","sweden"] },
+    { country: "Irlanda", flag: "https://flagcdn.com/w320/ie.png", aliases:["irlanda","ireland"] }
+];
+
+let currentFlag = null;
+
+function normalize(text) {
+    return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+}
+
+function nextFlag() {
+    const idx = Math.floor(Math.random() * flags.length);
+    currentFlag = flags[idx];
+    document.getElementById('flag').src = currentFlag.flag;
+    document.getElementById('guess').value = '';
+    document.getElementById('result').textContent = '';
+}
+
+function checkGuess() {
+    const val = normalize(document.getElementById('guess').value || '');
+    if(!val) { alert('Escreve o nome do país'); return; }
+    const ok = currentFlag.aliases.map(normalize).includes(val) || normalize(currentFlag.country) === val;
+    if(ok) {
+        document.getElementById('result').textContent = '✅ Correto! É ' + currentFlag.country;
+        document.getElementById('result').style.color = 'var(--success)';
+    } else {
+        document.getElementById('result').textContent = '❌ Errado — era ' + currentFlag.country;
+        document.getElementById('result').style.color = 'var(--danger)';
+    }
+}
+
+nextFlag();
+</script>
+{% endblock %}

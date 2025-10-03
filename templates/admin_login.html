@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="hero">
+    <h1>Área de Administração</h1>
+    <p>Acesso restrito</p>
+</div>
+
+<div class="main-content">
+    <div class="card" style="max-width:420px; margin:0 auto;">
+        <h3 style="text-align:center;">Login</h3>
+        <form method="POST">
+            <div style="margin-bottom:0.6rem;"><label>Username</label><input name="username" class="form-control" required></div>
+            <div style="margin-bottom:0.6rem;"><label>Password</label><input type="password" name="password" class="form-control" required></div>
+            <button class="btn" style="width:100%;">Entrar</button>
+        </form>
+
+        <div style="margin-top:1rem; padding:0.75rem; background:#fff8e6; border-radius:8px;">
+            <strong>Credenciais padrão:</strong>
+            <p>Username: <strong>admin</strong><br>Password: <strong>admin123</strong></p>
+            <small style="color:var(--warning);">Altera a password em ambiente de produção!</small>
+        </div>
+    </div>
+</div>
+{% endblock %}

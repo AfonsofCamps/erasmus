@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Painel Admin</h2>
+<div class="grid">
+  <div class="card">
+    <h3>Moderation</h3>
+    <p>Depoimentos pendentes: <strong>{{ stats.pending }}</strong></p>
+    <a class="btn" href="{{ url_for('testimonios', show='pending') }}">Ver pendentes</a>
+  </div>
+  <div class="card">
+    <h3>Utilizadores</h3>
+    <p>Admin user: <strong>{{ admin_user }}</strong></p>
+    <form action="{{ url_for('change_password') }}" method="post">
+      <label>Alterar password admin</label>
+      <input type="password" name="new_password" placeholder="nova password">
+      <button class="btn ghost" type="submit">Mudar</button>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <h3>Últimos depoimentos</h3>
+  {% for t in last %}
+    <div class="mini" style="display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <strong>{{ t.nome }}</strong> <small class="muted">{{ t.pais }}</small><br>
+        <span class="muted small">{{ t.created_at }}</span>
+      </div>
+      <div style="display:flex;gap:8px">
+        {% if not t.approved %}<button class="btn tiny" onclick="fetch('/api/approve/{{ t.id }}',{method:'POST'}).then(()=>location.reload())">Aprovar</button>{% endif %}
+        <a class="btn tiny ghost" href="{{ url_for('edit_testimonial', tid=t.id) }}">Editar</a>
+        <button class="btn tiny danger" onclick="fetch('/api/delete/{{ t.id }}',{method:'POST'}).then(()=>location.reload())">Eliminar</button>
+      </div>
+    </div>
+  {% else %}
+    <p>Sem depoimentos.</p>
+  {% endfor %}
+</div>
+{% endblock %}

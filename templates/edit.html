@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Editar Depoimento</h2>
+<form action="" method="post" enctype="multipart/form-data" class="form-upload">
+  <label>Nome</label>
+  <input type="text" name="nome" value="{{ t.nome }}" required>
+  <label>País</label>
+  <input type="text" name="pais" value="{{ t.pais }}">
+  <label>Curso</label>
+  <input type="text" name="curso" value="{{ t.curso }}">
+  <label>Texto</label>
+  <textarea name="texto" rows="6">{{ t.texto }}</textarea>
+  <label>Tags (vírgula separados)</label>
+  <input type="text" name="tags" value="{{ t.tags_json | from_json | join(', ') if t.tags_json else '' }}">
+  <div style="display:flex;gap:8px">
+    <button class="btn" type="submit">Guardar</button>
+    <a class="btn ghost" href="{{ url_for('admin_panel') }}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

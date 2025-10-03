@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="hero">
+    <h1>Dashboard de Administração</h1>
+    <p>Gerir depoimentos e visualizar estatísticas</p>
+</div>
+
+<div class="main-content">
+    <div class="stats-grid">
+        <div class="card" style="background:linear-gradient(90deg,var(--primary), #2b8bff); color:white;">
+            <div style="font-size:1.6rem; font-weight:700;">{{ total_testimonials }}</div>
+            <div>Total Depoimentos</div>
+        </div>
+        <div class="card" style="background:linear-gradient(90deg,var(--success), #2ecc71); color:white;">
+            <div style="font-size:1.6rem; font-weight:700;">{{ approved_testimonials }}</div>
+            <div>Aprovados</div>
+        </div>
+        <div class="card" style="background:linear-gradient(90deg,var(--warning), #f0ad4e); color:white;">
+            <div style="font-size:1.6rem; font-weight:700;">{{ pending_testimonials }}</div>
+            <div>Pendentes</div>
+        </div>
+        <div class="card" style="background:linear-gradient(90deg,var(--secondary), #ffd24d); color:var(--dark);">
+            <div style="font-size:1.6rem; font-weight:700;">{{ (approved_testimonials/total_testimonials*100 if total_testimonials>0 else 0)|round(1) }}%</div>
+            <div>Taxa de Aprovação</div>
+        </div>
+    </div>
+
+    <div class="card" style="margin-top:1rem;">
+        <h3>Ações Rápidas</h3>
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <a href="{{ url_for('admin_testimonials') }}" class="btn">Gerir Depoimentos</a>
+            <a href="{{ url_for('depoimentos') }}" class="btn btn-secondary">Ver Site Público</a>
+            <a href="{{ url_for('admin_logout') }}" class="btn" style="background:var(--danger);">Logout</a>
+        </div>
+    </div>
+
+    <div class="card" style="margin-top:1rem;">
+        <h3>Estatísticas por País</h3>
+        <canvas id="countriesChart" width="400" height="150"></canvas>
+    </div>
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fit,minmax(300px,1fr)); gap:1rem; margin-top:1rem;">
+        <div class="card">
+            <h3>Distribuição por Ano</h3>
+            <canvas id="yearsChart" width="400" height="200"></canvas>
+        </div>
+        <div class="card">
+            <h3>Submissões Mensais</h3>
+            <canvas id="monthlyChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const countriesLabels = [{% for c in countries_data %}'{{ c.country }}',{% endfor %}];
+const countriesValues = [{% for c in countries_data %}{{ c.count }},{% endfor %}];
+
+const ctx1 = document.getElementById('countriesChart').getContext('2d');
+new Chart(ctx1, {
+    type: 'bar',
+    data: { labels: countriesLabels, datasets: [{ label: 'Depoimentos', data: countriesValues }]},
+    options: { responsive:true, scales:{ y:{ beginAtZero:true } } }
+});
+
+const yearsLabels = [{% for y in years_data %}'{{ y.year }}',{% endfor %}];
+const yearsValues = [{% for y in years_data %}{{ y.count }},{% endfor %}];
+const ctx2 = document.getElementById('yearsChart').getContext('2d');
+new Chart(ctx2, { type:'line', data:{ labels:yearsLabels, datasets:[{ label:'Por ano', data:yearsValues, fill:true }]}, options:{ responsive:true }});
+
+const monthsLabels = [{% for m in monthly_data %}'{{ m.month }}',{% endfor %}];
+const monthsValues = [{% for m in monthly_data %}{{ m.count }},{% endfor %}];
+const ctx3 = document.getElementById('monthlyChart').getContext('2d');
+new Chart(ctx3, { type:'bar', data:{ labels:monthsLabels, datasets:[{ label:'Submissões', data:monthsValues }]}, options:{ responsive:true }});
+</script>
+{% endblock %}

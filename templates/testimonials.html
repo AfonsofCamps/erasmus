@@ -1,0 +1,32 @@
+
+{% extends 'base.html' %}
+{% block content %}
+<h2>Depoimentos dos Alunos</h2>
+<section class="upload">
+  <form action="" method="post" enctype="multipart/form-data" class="form-upload">
+    <label>Nome *</label>
+    <input type="text" name="nome" required>
+    <label>Curso (opcional)</label>
+    <input type="text" name="curso">
+    <label>Depoimento *</label>
+    <textarea name="texto" rows="4" required></textarea>
+    <label>Vídeo (opcional)</label>
+    <input type="file" name="video" accept="video/*">
+    <button type="submit" class="btn">Enviar depoimento</button>
+  </form>
+</section>
+<section class="list">
+  {% for t in testimonials %}
+    <div class="testimonial animate__animated animate__fadeInUp">
+      <h4>{{ t['nome'] }} <small>{{ t['curso'] }}</small></h4>
+      <p>{{ t['texto'] }}</p>
+      {% if t['video'] %}
+        <video controls width="640" src="{{ url_for('uploaded_file', filename=t['video']) }}"></video>
+      {% endif %}
+      <div class="meta">Enviado em {{ t['timestamp'] }}</div>
+    </div>
+  {% else %}
+    <p>Sem depoimentos ainda.</p>
+  {% endfor %}
+</section>
+{% endblock %}
